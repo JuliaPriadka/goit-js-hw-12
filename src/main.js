@@ -10,7 +10,7 @@ import { createMarkup } from './js/render-functions.js';
 
 import { perPage } from './js/pixabay-api.js';
 
-let page;
+let page = 1;
 let userSearch;
 let totalPages;
 
@@ -78,7 +78,6 @@ async function onFormSubmit(event) {
       position: 'bottomCenter',
     });
   }
-  page = 1;
   form.reset();
 }
 
