@@ -10,7 +10,7 @@ import { createMarkup } from './js/render-functions.js';
 
 import { perPage } from './js/pixabay-api.js';
 
-let page = 1;
+let page;
 let userSearch;
 let totalPages;
 
@@ -28,29 +28,31 @@ loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
 
 async function onFormSubmit(event) {
   event.preventDefault();
+  page = 1;
 
-  loader.style.display = 'none';
   loadMoreBtn.style.display = 'none';
   container.innerHTML = '';
-
+  loader.style.display = 'flex';
+  
   userSearch = event.target.elements.input.value.trim();
+  
+  try {
+    const response = await getImages(userSearch, page);
 
   if (userSearch.length === 0) {
-    loader.style.display = 'flex';
-    iziToast.show({
+       iziToast.show({
       message: 'Please, fill in the "Search" params',
       backgroundColor: '#ef4040',
       messageColor: '#fff',
       position: 'bottomCenter',
-    });
-    return;
+       });
+      loader.style.display = 'none';
+        return;
   }
 
-  try {
-    const response = await getImages(userSearch, page);
+    loader.style.display = 'none';
 
     if (response.hits.length === 0) {
-      loader.style.display = 'flex';
       iziToast.show({
         message:
           'Sorry, there are no images matching your search query. Please try again!',
@@ -67,7 +69,6 @@ async function onFormSubmit(event) {
 
     const card = document.querySelector('.card');
     const cardHeight = card.getBoundingClientRect().height;
-    window.scrollBy(0, cardHeight * 2);
 
     lightbox.refresh();
   } catch (error) {
